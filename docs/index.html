@@ -6,7 +6,7 @@
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Using-CSS-Counters</title>
+<title>Using CSS Counters</title>
 <link rel="stylesheet" href="../public/styles.css">
 <link rel="stylesheet" href="../public/media-queries.css">
 <link rel="stylesheet" href="../public/prism/prism.css">
@@ -19,21 +19,155 @@ content="width=device-width, initial-scale=1.0"
 <body>
 <main id="main">
 <header>
-<h1>Using-CSS-Counters</h1>
-<h3>(set subtitle in 99-Intro.md, if required)</h3>
+<h1>Using CSS Counters</h1>
+<h3>Numbering elements not in an ordered list</h3>
 <h4>December 2024</h4>
 </header>
 
-<section id="intro" aria-labelledby="intro" data-item="Introduction">
+<!-- The Solution -->
+<section id="the-solution" aria-labelledby="the-solution" data-item="The Solution">
 <h2>
-<a href="#intro">Introduction</a>
+<a href="#the-solution">The Solution</a>
 </h2>
-<p>To create your own content, edit the file at
-<code>docs/md/99-Intro.md</code> and add more <code>.md</code> files in
-the <code>docs/md/</code> folder.</p>
-<p>See <a
-href="https://htm-elves.github.io/Writing-Your-Own-Tutorials/">Writing
-Your Own Tutorials</a> for tips and shortcuts.</p>
+<p>The solution is to use a <a
+href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_counter_styles/Using_CSS_counters">CSS
+counter</a>. You’ll need to do four things:</p>
+<ol type="1">
+<li>Declare a counter and give it an initial value</li>
+<li>Increment the counter for each element that should be numbered</li>
+<li>Display the newly-incremented value in the numbered element. This is
+usually done using the <code>content</code> of a <code>::before</code>
+pseudo-element</li>
+<li>Add <code>". "</code> as decoration in the <code>content</code> of
+the <code>::before</code> pseudo-element.</li>
+</ol>
+<p>Taking the CSS that is used for the rest of the styling as given, you
+can add this rule:</p>
+<pre class="language-css"><code class="language-css">ol {
+  counter-reset: item 0;
+
+  a::before {
+    counter-increment: item 1;
+    content: counter(item) ". ";
+  }
+}</code></pre>
+<p>This almost solves the problem:</p>
+<figure>
+<img src="images/almost.webp"
+alt="The link elements are now numbered" />
+<figcaption aria-hidden="true">The link elements are now
+numbered</figcaption>
+</figure>
+<details class="tip" open>
+<summary>
+Default values
+</summary>
+<p>The default value for <code>counter-reset</code> is <code>0</code>,
+and the default value for <code>counter-increment</code> is
+<code>1</code>, so the less explicit CSS below has exactly the same
+effect.</p>
+<pre class="language-css"><code class="language-css">ol {
+  counter-reset: item;
+
+  a::before {
+    counter-increment: item;
+    content: counter(item) ". ";
+  }
+}</code></pre>
+</details>
+<h2 id="hiding-the-built-in-numbering-system">Hiding the built-in
+numbering system</h2>
+<p>To obtain the effect you want, you now need to hide the built-in
+numbering system for <code>&lt;ol&gt;</code> items:</p>
+<pre class="language-css"><code class="language-css"><i>ol {
+  counter-reset: item;</i>
+  <b>list-style-type: none;</b><i>
+
+  a::before {
+    counter-increment: item;
+    content: counter(item) ". ";
+  }
+}</i></code></pre>
+</section>
+<!-- The Full CSS -->
+<section id="the-full-css" aria-labelledby="the-full-css" data-item="The Full CSS">
+<h2>
+<a href="#the-full-css">The Full CSS</a>
+</h2>
+<p>Below is the full CSS that will produce the desired effect, for
+reference.</p>
+<figure>
+<img src="images/expected.webp" alt="The desired effect" />
+<figcaption aria-hidden="true">The desired effect</figcaption>
+</figure>
+<pre class="language-css line-numbers"><code class="language-css line-numbers">body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-family: Helvetica, Arial, sans-serif;
+  color: #ddd;
+  background-color: #222;
+}
+ol {
+  width: 8em;
+  list-style-type: none;
+  counter-reset: item 0;
+
+  li {
+    margin: 0.5em;
+    border: 1px outset white;
+    border-radius: 0.5em;
+    box-sizing: border-box;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    display: inline-block;
+    padding: 0.5em;
+    width: 100%;
+    box-sizing: border-box;
+
+    &::before {
+      counter-increment: item 1;
+      content: counter(item) ". ";
+    }
+  }
+}</code></pre>
+</section>
+<section id="the-problem" aria-labelledby="the-problem" data-item="The Problem">
+<h2>
+<a href="#the-problem">The Problem</a>
+</h2>
+<p>In this tutorial, I will show you how to use <a
+href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_counter_styles/Using_CSS_counters">CSS
+counters</a> to number the link elements in a navigation menu.</p>
+<p>Imagine that you have an <code>&lt;ol&gt;</code> element with the
+following structure:</p>
+<pre class="language-html"><code class="language-html">&lt;ol&gt;
+  &lt;li&gt;&lt;a href="#beginning"&gt;Beginning&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="#middle"&gt;Middle&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="#end"&gt;End&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+<p>You’ve used an ordered list, because you want the list items to be
+numbered. When you apply your best CSS styling, you really want the
+items to appear like this:</p>
+<figure>
+<img src="images/expected.webp" alt="What you want" />
+<figcaption aria-hidden="true">What you want</figcaption>
+</figure>
+<p>Instead, the numbers for each list item appear outside the
+<code>&lt;li&gt;</code> elements, like this:</p>
+<figure>
+<img src="images/actual.webp" alt="What you get" />
+<figcaption aria-hidden="true">What you get</figcaption>
+</figure>
+<p>How can you fix this?</p>
 </section>
 
 <div class="spacer"></div>
@@ -114,14 +248,14 @@ y2="80"
 
 <div id="repo">
 <a
-href="https://github.com/MvTutorials/Using-CSS-Counters/issues/new"
+href="https://github.com/HTM-Elves/Using-CSS-Counters/issues/new"
 >
 Feedback
 </a>
 
 <a
 class="repo"
-href="https://github.com/MvTutorials/Using-CSS-Counters"
+href="https://github.com/HTM-Elves/Using-CSS-Counters"
 >
 <img src="../public/svg/github.svg" alt="github logo">
 <span>GitHub repository</span>
